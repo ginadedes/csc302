@@ -3,6 +3,15 @@
 #include <arpa/inet.h>
 #include <net/ethernet.h>
 
+/*UDP header */
+struct udpheader {
+  u_int16_t udp_sport;/* source port */
+  u_int16_t udp_dport;/* destination port */
+  u_int16_t udp_ulen; /* udp length */
+  u_int16_t udp_sum;  /* udp checksum */
+};
+
+
 /* Ethernet header */
 struct ethheader {
   u_char  ether_dhost[ETHER_ADDR_LEN]; /* destination host address */
@@ -25,6 +34,12 @@ struct ipheader {
   struct  in_addr    iph_sourceip; //Source IP address 
   struct  in_addr    iph_destip;   //Destination IP address 
 };
+
+struct udpheader *udp = (struct udpheader *)
+                        (packet + sizeof(struct ethheader) + sizeof(struct ipheader));
+char *msg = malloc(udp->udp_ulen * sizeof(char));
+msg = packet +  sizeof(struct ethheader) + sizeof(struct ipheader) + sizeof(struct udpheader);
+printf(" Message: %s\n", msg);
 
 void got_packet(u_char *args, const struct pcap_pkthdr *header, 
                               const u_char *packet)
